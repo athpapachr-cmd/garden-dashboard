@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ddfff5">
+<title>Ο Κήπος μου</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{
+  --mint:#24c999;
+  --mint-dark:#08755b;
+  --mint-soft:#ddfff5;
+  --ink:#102a23;
+  --muted:#72817c;
+  --surface:#ffffff;
+  --line:#e9f0ed;
+  --warm:#ffb447;
+  --danger:#d65a5a;
+  --shadow:0 10px 32px rgba(25,71,58,.09);
+  --radius:24px;
+}
+*{box-sizing:border-box}
+html{background:#f7fbf9}
+body{
+  margin:0;color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Arial,sans-serif;
+  background:linear-gradient(180deg,var(--mint-soft) 0, #f7fbf9 300px);
+  min-height:100vh;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:760px;margin:auto;min-height:100vh;padding-bottom:104px}
+.topbar{
+  padding:calc(20px + env(safe-area-inset-top)) 22px 18px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.brand small{display:block;color:var(--mint-dark);font-weight:750;letter-spacing:.04em}
+.brand h1{margin:4px 0 0;font-size:35px;line-height:1}
+.icon-row{display:flex;gap:10px}
+.icon-btn{
+  width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.66);
+  color:var(--mint-dark);font-size:21px;box-shadow:0 6px 20px rgba(0,0,0,.04)
+}
+.screen{display:none;padding:0 20px 22px}.screen.active{display:block}
+.weather{
+  display:flex;align-items:center;justify-content:space-between;padding:13px 16px;
+  background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.86);
+  border-radius:20px;margin-bottom:18px;
+}
+.weather-main{display:flex;gap:12px;align-items:center}
+.sun{width:45px;height:45px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffe397,#ffb82d 65%,#ff9a20);box-shadow:0 8px 18px rgba(255,174,32,.28)}
+.weather strong{font-size:20px}.weather span{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.calendar-strip{display:flex;gap:8px;overflow:auto;padding:3px 1px 16px;scrollbar-width:none}
+.calendar-strip::-webkit-scrollbar{display:none}
+.day-chip{
+  min-width:62px;padding:9px 7px;border-radius:17px;border:1px solid #dce8e3;background:rgba(255,255,255,.72);
+  text-align:center;color:var(--muted)
+}
+.day-chip b{display:block;font-size:19px;margin-top:4px;color:#53645e}
+.day-chip.active{background:var(--mint);border-color:var(--mint);color:white;box-shadow:0 8px 18px rgba(36,201,153,.25)}
+.day-chip.active b{color:white}
+.section-head{display:flex;align-items:end;justify-content:space-between;margin:8px 2px 12px}
+.section-head h2{margin:0;font-size:25px}.section-head button{border:0;background:transparent;color:var(--mint-dark);font-weight:750}
+.card{
+  background:var(--surface);border:1px solid rgba(233,240,237,.8);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:18px;margin-bottom:15px
+}
+.hero-card{padding:20px;position:relative;overflow:hidden}
+.hero-card:after{
+  content:"";position:absolute;width:190px;height:190px;border-radius:50%;right:-70px;top:-80px;
+  background:linear-gradient(145deg,rgba(36,201,153,.28),rgba(36,201,153,.03))
+}
+.hero-top{display:flex;justify-content:space-between;gap:14px;position:relative;z-index:1}
+.hero-icon{width:54px;height:54px;border-radius:18px;background:#e4fff5;display:grid;place-items:center;font-size:28px}
+.hero-card h3{margin:10px 0 3px;font-size:24px}.hero-card p{margin:0;color:var(--muted)}
+.progress{height:9px;background:#edf4f1;border-radius:99px;overflow:hidden;margin:18px 0 8px}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mint),#65dfb9);border-radius:99px;transition:.25s}
+.task-group{padding:0}
+.task-group h3{font-size:20px;margin:0;padding:18px 18px 7px;display:flex;justify-content:space-between}
+.task{
+  display:flex;align-items:center;gap:13px;padding:14px 18px;border-top:1px dashed var(--line)
+}
+.task:first-of-type{border-top:0}
+.task input{appearance:none;width:26px;height:26px;border:2px solid #c7d6d0;border-radius:9px;display:grid;place-items:center;flex:none}
+.task input:checked{background:var(--mint);border-color:var(--mint)}
+.task input:checked:after{content:"✓";color:#fff;font-weight:900}
+.task-copy{flex:1}.task-copy b{display:block;font-size:16px}.task-copy span{font-size:13px;color:var(--muted)}
+.badge{font-size:12px;font-weight:750;padding:6px 9px;border-radius:999px;background:#e5fff6;color:var(--mint-dark)}
+.badge.warm{background:#fff4df;color:#a06409}
+.water-box{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.metric{padding:15px;border-radius:18px;background:#f4faf7}
+.metric small{color:var(--muted);display:block}.metric strong{display:block;font-size:25px;margin-top:5px}
+.primary{
+  width:100%;border:0;border-radius:17px;background:var(--mint);color:#fff;
+  font-weight:800;padding:15px;margin-top:13px;box-shadow:0 8px 20px rgba(36,201,153,.24)
+}
+.secondary{border:0;border-radius:14px;background:#e6fff6;color:var(--mint-dark);font-weight:750;padding:11px 14px}
+.field{margin:12px 0}.field label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.field input,.field textarea,.field select{
+  width:100%;border:1px solid #dfe9e5;background:#fbfdfc;border-radius:15px;padding:13px;color:var(--ink)
+}
+.field textarea{min-height:92px;resize:vertical}
+.plant-card{display:flex;gap:14px;align-items:center;padding:13px}
+.plant-card img{width:112px;height:112px;object-fit:cover;border-radius:19px;background:#e7f1ed}
+.plant-card .copy{flex:1}.plant-card h3{margin:0 0 5px;font-size:22px}.plant-card p{margin:3px 0;color:var(--muted)}
+.menu-dot{font-size:24px;color:#929f9a}
+.tool-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.tool{
+  border:0;background:white;border-radius:22px;box-shadow:var(--shadow);padding:21px 15px;text-align:left;min-height:140px
+}
+.tool .emoji{font-size:35px}.tool b{display:block;font-size:18px;margin-top:20px}
+.diagnose-hero{text-align:center;padding:28px 20px}
+.diagnose-hero .plant-art{font-size:86px;filter:drop-shadow(0 12px 15px rgba(0,0,0,.08))}
+.diagnose-hero h2{font-size:27px;margin:8px 0}.diagnose-hero p{color:var(--muted)}
+.photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.photo{background:#fff;border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+.photo img{width:100%;height:150px;object-fit:cover}.photo div{padding:10px}.photo small{color:var(--muted)}
+.history-row{padding:13px 0;border-bottom:1px solid var(--line)}.history-row:last-child{border-bottom:0}
+.empty{text-align:center;color:var(--muted);padding:30px 10px}
+.bottom-nav{
+  position:fixed;z-index:10;bottom:0;left:0;right:0;background:rgba(255,255,255,.95);
+  backdrop-filter:blur(15px);border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+  display:flex;justify-content:center
+}
+.bottom-nav .inner{width:min(760px,100%);display:grid;grid-template-columns:repeat(5,1fr)}
+.nav-btn{border:0;background:transparent;color:#71807b;padding:4px 2px;font-size:11px;font-weight:650}
+.nav-btn i{display:block;font-style:normal;font-size:25px;line-height:1.25}
+.nav-btn.active{color:var(--mint)}
+.modal{display:none;position:fixed;z-index:30;inset:0;background:rgba(11,38,30,.35);padding:18px;align-items:flex-end;justify-content:center}
+.modal.open{display:flex}.sheet{width:min(720px,100%);background:white;border-radius:28px;padding:20px;max-height:85vh;overflow:auto}
+.close{float:right;border:0;background:#eef4f1;border-radius:50%;width:38px;height:38px}
+@media(min-width:680px){
+  .tool-grid{grid-template-columns:repeat(3,1fr)}
+  .photo-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand"><small>GARDEN CARE</small><h1 id="pageTitle">Πρόγραμμα</h1></div>
+  <div class="icon-row"><button class="icon-btn" onclick="openSettings()">⚙︎</button></div>
+</header>
+
+<main>
+<section id="schedule" class="screen active">
+  <div class="weather">
+    <div class="weather-main"><div class="sun"></div><div><strong>Καλοκαιρινό πρόγραμμα</strong><span>Κύπρος · πότισμα στις 07:00</span></div></div>
+    <span class="badge warm">Ιούλιος</span>
+  </div>
+  <div id="calendarStrip" class="calendar-strip"></div>
+
+  <div class="card hero-card">
+    <div class="hero-top">
+      <div><div class="hero-icon">🌱</div><h3>Σημερινή φροντίδα</h3><p id="taskSummary">0 εργασίες ολοκληρώθηκαν</p></div>
+      <span class="badge" id="completionBadge">0%</span>
+    </div>
+    <div class="progress"><span id="progressBar"></span></div>
+  </div>
+
+  <div class="section-head"><h2>Εργασίες</h2><button onclick="resetToday()">Επαναφορά</button></div>
+  <div id="taskGroups"></div>
+
+  <div class="section-head"><h2>Πότισμα</h2></div>
+  <div class="card">
+    <div class="water-box">
+      <div class="metric"><small>Στόχος</small><strong>50 L</strong></div>
+      <div class="metric"><small>Χρόνος στα 2,37 L/min</small><strong>≈ 21′</strong></div>
+    </div>
+    <div class="field"><label>Πραγματικός όγκος σήμερα</label><input id="waterInput" type="number" inputmode="decimal" placeholder="π.χ. 50"></div>
+    <button class="primary" onclick="saveWater()">Καταχώρηση ποτίσματος</button>
+  </div>
+
+  <div class="card">
+    <div class="field"><label>Σημείωση ημέρας</label><textarea id="noteInput" placeholder="Ανάπτυξη, μαρασμός, έντομα, άνθη, καρποί…"></textarea></div>
+    <button class="secondary" onclick="saveNote()">Αποθήκευση σημείωσης</button>
+  </div>
+</section>
+
+<section id="diagnose" class="screen">
+  <div class="card diagnose-hero">
+    <div class="plant-art">🪴</div>
+    <h2>Έλεγχος φυτού</h2>
+    <p>Κατέγραψε σύμπτωμα και φωτογραφία. Η εφαρμογή κρατά ιστορικό για την εβδομαδιαία αξιολόγηση.</p>
+    <button class="primary" onclick="document.getElementById('diagnosisPhoto').click()">📷 Νέα καταγραφή</button>
+    <input id="diagnosisPhoto" type="file" accept="image/*" capture="environment" hidden onchange="openDiagnosisForm(event)">
+  </div>
+  <div class="section-head"><h2>Ιστορικό ελέγχων</h2></div>
+  <div id="diagnosisHistory" class="card"></div>
+</section>
+
+<section id="beds" class="screen">
+  <div class="section-head"><h2>Τα παρτέρια μου</h2><button onclick="openBedEditor()">+ Νέα σημείωση</button></div>
+  <div class="card plant-card">
+    <img src="assets/bed_tomatoes.jpeg" alt="Παρτέρι ντοματιάς">
+    <div class="copy"><h3>Παρτέρι ντοματιάς</h3><p>Ντοματιές · βασιλικοί · κρεμμυδάκια</p><p>5 γραμμές στάγδην</p></div><span class="menu-dot">•••</span>
+  </div>
+  <div class="card plant-card">
+    <img src="assets/bed_peppers.jpeg" alt="Παρτέρι πιπεριάς">
+    <div class="copy"><h3>Μικτό παρτέρι</h3><p>Πιπεριές · κρεμμύδια · λοιπά λαχανικά</p><p>5 γραμμές στάγδην</p></div><span class="menu-dot">•••</span>
+  </div>
+  <div class="card">
+    <div class="field"><label>Σημειώσεις παρτεριού ντοματιάς</label><textarea id="bed1Note"></textarea></div>
+    <div class="field"><label>Σημειώσεις μικτού παρτεριού</label><textarea id="bed2Note"></textarea></div>
+    <button class="primary" onclick="saveBeds()">Αποθήκευση</button>
+  </div>
+</section>
+
+<section id="toolkit" class="screen">
+  <div class="section-head"><h2>Εργαλεία κήπου</h2></div>
+  <div class="tool-grid">
+    <button class="tool" onclick="showTool('water')"><span class="emoji">💧</span><b>Υπολογιστής νερού</b></button>
+    <button class="tool" onclick="showTool('mulch')"><span class="emoji">🍂</span><b>Εδαφοκάλυψη</b></button>
+    <button class="tool" onclick="showTool('feed')"><span class="emoji">🧪</span><b>Λίπανση</b></button>
+    <button class="tool" onclick="showTool('spray')"><span class="emoji">🛡️</span><b>Ψεκασμοί</b></button>
+    <button class="tool" onclick="showTool('prune')"><span class="emoji">✂️</span><b>Κλάδεμα ντομάτας</b></button>
+    <button class="tool" onclick="downloadICS()"><span class="emoji">📅</span><b>Ημερολόγιο iPhone</b></button>
+  </div>
+  <div class="section-head" style="margin-top:24px"><h2>Γρήγορες οδηγίες</h2></div>
+  <div class="card">
+    <h3>Νεοφυτεμένες ντοματιές</h3>
+    <p>Σταθερή υγρασία, χωρίς λίπανση ή κλάδεμα για 7–10 ημέρες. Ψεκασμός μόνο με σαφή ένδειξη προβλήματος.</p>
+  </div>
+  <div class="card">
+    <h3>Εδαφοκάλυψη</h3>
+    <p>Λεπτή στρώση υγιών φύλλων και από πάνω 5–8 cm πευκοβελόνες. Κενό 5–10 cm γύρω από τον λαιμό κάθε φυτού.</p>
+  </div>
+</section>
+
+<section id="log" class="screen">
+  <div class="section-head"><h2>Ημερολόγιο καλλιέργειας</h2><button onclick="document.getElementById('logPhoto').click()">+ Φωτογραφία</button></div>
+  <input id="logPhoto" type="file" accept="image/*" capture="environment" hidden onchange="addLogPhoto(event)">
+  <div id="photoGrid" class="photo-grid"></div>
+  <div class="section-head" style="margin-top:24px"><h2>Καταχωρήσεις</h2></div>
+  <div id="historyList" class="card"></div>
+</section>
+</main>
+</div>
+
+<nav class="bottom-nav"><div class="inner">
+  <button class="nav-btn active" data-screen="schedule" data-title="Πρόγραμμα"><i>⏰</i>Πρόγραμμα</button>
+  <button class="nav-btn" data-screen="diagnose" data-title="Διάγνωση"><i>🩺</i>Διάγνωση</button>
+  <button class="nav-btn" data-screen="beds" data-title="Παρτέρια"><i>🌿</i>Παρτέρια</button>
+  <button class="nav-btn" data-screen="toolkit" data-title="Εργαλεία"><i>🧰</i>Εργαλεία</button>
+  <button class="nav-btn" data-screen="log" data-title="Ιστορικό"><i>🍃</i>Ιστορικό</button>
+</div></nav>
+
+<div id="modal" class="modal"><div class="sheet"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
+
+<script>
+const DAYS=["Κυ","Δευ","Τρι","Τετ","Πεμ","Παρ","Σαβ"];
+const DAY_NAMES=["Κυριακή","Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή","Σάββατο"];
+const daily=[
+  {group:"Καθημερινός έλεγχος",icon:"🔎",items:[
+    ["Υγρασία εδάφους","Έλεγχος σε βάθος 5–10 cm"],
+    ["Γραμμές στάγδην","Έλεγχος ομοιόμορφης λειτουργίας"],
+    ["Φύλλα και κορυφές","Μαρασμός, κιτρίνισμα ή κηλίδες"],
+    ["Κάτω επιφάνεια φύλλων","Αφίδες, αλευρώδης, τετράνυχος"]
+  ]}
+];
+const weekly={
+  0:{group:"Εβδομαδιαίος σχεδιασμός",icon:"📋",items:[
+    ["Αξιολόγηση ανάπτυξης","Σύγκριση με την προηγούμενη εβδομάδα"],
+    ["Ρύθμιση ποτίσματος","Προσαρμογή με βάση υγρασία και θερμοκρασία"],
+    ["Λίπανση","Μόνο ανά 14 ημέρες και μετά την εγκατάσταση"]
+  ]},
+  1:{group:"Σύστημα ποτίσματος",icon:"💧",items:[
+    ["Έλεγχος LinkTap","Κατανάλωση και ασυνήθιστη ροή"],
+    ["Έλεγχος σωληνώσεων","Διαρροές, τσακίσματα ή βουλώματα"]
+  ]},
+  2:{group:"Έδαφος",icon:"🍂",items:[
+    ["Αφαίρεση ζιζανίων","Ήπια, χωρίς διατάραξη ριζών"],
+    ["Εδαφοκάλυψη","Συμπλήρωση πευκοβελονών όπου λείπουν"]
+  ]},
+  3:{group:"Παρακολούθηση",icon:"📷",items:[
+    ["Φωτογράφηση παρτεριών","Ίδια γωνία κάθε εβδομάδα"],
+    ["Έλεγχος ανάπτυξης","Νέα φύλλα, άνθη και καρπόδεση"]
+  ]},
+  4:{group:"Στήριξη και κλάδεμα",icon:"✂️",items:[
+    ["Δέσιμο ντοματιών","Χαλαρό δέσιμο στον πάσσαλο"],
+    ["Λαίμαργοι βλαστοί","Μόνο αφού αναρρώσουν από τη μεταφύτευση"],
+    ["Χαμηλά φύλλα","Αφαίρεση μόνο αν ακουμπούν στο έδαφος"]
+  ]},
+  5:{group:"Καρποφορία",icon:"🌼",items:[
+    ["Άνθη και καρπόδεση","Παρατήρηση πτώσης ανθέων"],
+    ["Πιπεριές και βασιλικοί","Έλεγχος ζωηρότητας και χρώματος"]
+  ]},
+  6:{group:"Πρόληψη",icon:"🛡️",items:[
+    ["Ψεκασμός","Μόνο με συγκεκριμένη ένδειξη"],
+    ["Καθαρισμός εργαλείων","Πλύσιμο και απολύμανση ψαλιδιού"]
+  ]}
+};
+function load(){try{return JSON.parse(localStorage.getItem("gardenV2")||"{}")}catch{return{}}}
+function save(){localStorage.setItem("gardenV2",JSON.stringify(state))}
+let state=load();
+const iso=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");return `${y}-${m}-${day}`}
+let selectedDate=iso(new Date());
+
+function buildCalendar(){
+  const box=document.getElementById("calendarStrip");box.innerHTML="";
+  const base=new Date();
+  for(let i=-2;i<5;i++){
+    const d=new Date(base);d.setDate(base.getDate()+i);
+    const b=document.createElement("button");b.className="day-chip"+(iso(d)===selectedDate?" active":"");
+    b.innerHTML=`${DAYS[d.getDay()]}<b>${d.getDate()}</b>`;
+    b.onclick=()=>{selectedDate=iso(d);buildCalendar();renderTasks();loadDay()};
+    box.appendChild(b);
+  }
+}
+function allTasksForDate(){
+  const d=new Date(selectedDate+"T12:00:00");
+  return [...daily,{...weekly[d.getDay()]}];
+}
+function renderTasks(){
+  const box=document.getElementById("taskGroups");box.innerHTML="";
+  const done=state.tasks?.[selectedDate]||{};
+  let index=0,total=0,completed=0;
+  allTasksForDate().forEach(group=>{
+    const card=document.createElement("div");card.className="card task-group";
+    card.innerHTML=`<h3><span>${group.icon} ${group.group}</span><span class="badge">${group.items.length}</span></h3>`;
+    group.items.forEach(item=>{
+      const id=index++; total++;
+      if(done[id])completed++;
+      const row=document.createElement("label");row.className="task";
+      row.innerHTML=`<input type="checkbox" ${done[id]?"checked":""}><div class="task-copy"><b>${item[0]}</b><span>${item[1]}</span></div>`;
+      row.querySelector("input").onchange=e=>{
+        state.tasks=state.tasks||{};state.tasks[selectedDate]=state.tasks[selectedDate]||{};
+        state.tasks[selectedDate][id]=e.target.checked;save();renderTasks();renderHistory()
+      };
+      card.appendChild(row)
+    });
+    box.appendChild(card)
+  });
+  const pct=total?Math.round(completed/total*100):0;
+  document.getElementById("progressBar").style.width=pct+"%";
+  document.getElementById("completionBadge").textContent=pct+"%";
+  document.getElementById("taskSummary").textContent=`${completed} από ${total} εργασίες ολοκληρώθηκαν`;
+}
+function loadDay(){
+  document.getElementById("waterInput").value=state.water?.[selectedDate]??"";
+  document.getElementById("noteInput").value=state.notes?.[selectedDate]??""
+}
+function saveWater(){state.water=state.water||{};state.water[selectedDate]=Number(document.getElementById("waterInput").value||0);save();renderHistory();toast("Το πότισμα καταχωρήθηκε")}
+function saveNote(){state.notes=state.notes||{};state.notes[selectedDate]=document.getElementById("noteInput").value.trim();save();renderHistory();toast("Η σημείωση αποθηκεύτηκε")}
+function resetToday(){if(confirm("Να μηδενιστούν οι εργασίες της επιλεγμένης ημέρας;")){if(state.tasks)delete state.tasks[selectedDate];save();renderTasks()}}
+function saveBeds(){state.beds={one:bed1Note.value,two:bed2Note.value};save();toast("Οι σημειώσεις αποθηκεύτηκαν")}
+function loadBeds(){bed1Note.value=state.beds?.one||"";bed2Note.value=state.beds?.two||""}
+function renderHistory(){
+  const dates=[...new Set([...Object.keys(state.water||{}),...Object.keys(state.notes||{}),...Object.keys(state.tasks||{})])].sort().reverse();
+  const box=document.getElementById("historyList");
+  if(!dates.length){box.innerHTML='<div class="empty">Δεν υπάρχουν ακόμη καταχωρήσεις.</div>';return}
+  box.innerHTML=dates.map(date=>{
+    const count=Object.values(state.tasks?.[date]||{}).filter(Boolean).length;
+    return `<div class="history-row"><b>${new Date(date+"T12:00:00").toLocaleDateString("el-GR",{weekday:"long",day:"numeric",month:"long"})}</b><div class="small">💧 ${state.water?.[date]??"—"} L · ✓ ${count} εργασίες</div>${state.notes?.[date]?`<p>${state.notes[date]}</p>`:""}</div>`
+  }).join("")
+}
+function addLogPhoto(e){
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{state.photos=state.photos||[];state.photos.unshift({date:new Date().toISOString(),src:r.result,caption:"Εβδομαδιαία φωτογραφία"});state.photos=state.photos.slice(0,18);save();renderPhotos()};r.readAsDataURL(f)
+}
+function renderPhotos(){
+  const box=document.getElementById("photoGrid");
+  if(!(state.photos||[]).length){box.innerHTML='<div class="empty" style="grid-column:1/-1">Δεν υπάρχουν φωτογραφίες.</div>';return}
+  box.innerHTML=state.photos.map((p,i)=>`<div class="photo"><img src="${p.src}"><div><b>${p.caption}</b><br><small>${new Date(p.date).toLocaleDateString("el-GR")}</small><br><button class="secondary" onclick="deletePhoto(${i})">Διαγραφή</button></div></div>`).join("")
+}
+function deletePhoto(i){if(confirm("Διαγραφή φωτογραφίας;")){state.photos.splice(i,1);save();renderPhotos()}}
+let pendingDiagnosisPhoto="";
+function openDiagnosisForm(e){
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{pendingDiagnosisPhoto=r.result;openModal(`<h2>Νέα καταγραφή</h2><img src="${pendingDiagnosisPhoto}" style="width:100%;max-height:260px;object-fit:cover;border-radius:18px"><div class="field"><label>Φυτό</label><select id="diagPlant"><option>Ντοματιά</option><option>Πιπεριά</option><option>Κρεμμυδάκι</option><option>Βασιλικός</option><option>Άλλο</option></select></div><div class="field"><label>Σύμπτωμα</label><textarea id="diagSymptom" placeholder="Περιέγραψε τι βλέπεις…"></textarea></div><button class="primary" onclick="saveDiagnosis()">Αποθήκευση ελέγχου</button>`)};r.readAsDataURL(f)
+}
+function saveDiagnosis(){
+  state.diagnoses=state.diagnoses||[];state.diagnoses.unshift({date:new Date().toISOString(),plant:diagPlant.value,symptom:diagSymptom.value,src:pendingDiagnosisPhoto});state.diagnoses=state.diagnoses.slice(0,12);save();closeModal();renderDiagnoses()
+}
+function renderDiagnoses(){
+  const box=document.getElementById("diagnosisHistory");
+  if(!(state.diagnoses||[]).length){box.innerHTML='<div class="empty">Δεν υπάρχουν ακόμη έλεγχοι.</div>';return}
+  box.innerHTML=state.diagnoses.map(x=>`<div class="plant-card"><img src="${x.src}"><div class="copy"><h3>${x.plant}</h3><p>${x.symptom||"Χωρίς σημείωση"}</p><p>${new Date(x.date).toLocaleDateString("el-GR")}</p></div></div>`).join("")
+}
+function showTool(type){
+ const content={
+  water:["Υπολογιστής νερού","Με ροή 2,37 L/min: 40 L ≈ 17′, 50 L ≈ 21′, 60 L ≈ 25′. Έλεγξε την υγρασία σε βάθος και όχι μόνο την επιφάνεια."],
+  mulch:["Εδαφοκάλυψη","Βάλε 1–2 cm ψιλοκομμένα υγιή φύλλα και 5–8 cm πευκοβελόνες. Άφησε ακάλυπτο κύκλο 5–10 cm γύρω από κάθε στέλεχος."],
+  feed:["Λίπανση","Καμία λίπανση τις πρώτες 7–10 ημέρες μετά τη μεταφύτευση. Έπειτα ελαφριά λίπανση και επανάληψη ανάλογα με το προϊόν, όχι μηχανικά κάθε εβδομάδα."],
+  spray:["Ψεκασμοί","Όχι προληπτικός ψεκασμός χωρίς ένδειξη. Ταυτοποίησε πρώτα έντομο ή νόσο και ακολούθησε την ετικέτα του εγκεκριμένου σκευάσματος."],
+  prune:["Κλάδεμα ντομάτας","Ξεκίνα αφού εγκατασταθούν. Αφαίρεσε μικρούς λαίμαργους, δέσε χαλαρά και μην αφαιρείς πολλά φύλλα σε περίοδο καύσωνα."]
+ }[type];openModal(`<h2>${content[0]}</h2><p>${content[1]}</p>`)
+}
+function openModal(html){modalContent.innerHTML=html;modal.classList.add("open")}
+function closeModal(){modal.classList.remove("open")}
+function openSettings(){openModal(`<h2>Ρυθμίσεις</h2><p>Τα δεδομένα αποθηκεύονται τοπικά σε αυτή τη συσκευή.</p><button class="secondary" onclick="downloadICS()">Εξαγωγή ημερολογίου iPhone</button><button class="primary" style="background:#d65a5a" onclick="clearData()">Διαγραφή όλων των δεδομένων</button>`)}
+function clearData(){if(confirm("Οριστική διαγραφή όλων των τοπικών δεδομένων;")){localStorage.removeItem("gardenV2");location.reload()}}
+function openBedEditor(){document.getElementById("bed1Note").focus();document.getElementById("bed1Note").scrollIntoView({behavior:"smooth"})}
+function toast(msg){const t=document.createElement("div");t.textContent=msg;t.style="position:fixed;z-index:50;left:50%;bottom:105px;transform:translateX(-50%);background:#102a23;color:white;padding:11px 16px;border-radius:999px;font-weight:700";document.body.appendChild(t);setTimeout(()=>t.remove(),1700)}
+function icsLocal(d){return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}T${String(d.getHours()).padStart(2,"0")}${String(d.getMinutes()).padStart(2,"0")}00`}
+function downloadICS(){
+  const start=new Date();start.setDate(start.getDate()+1);start.setHours(7,0,0,0);
+  let txt="BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Garden Care Cyprus//EL\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n";
+  for(let i=0;i<84;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);const end=new Date(d);end.setMinutes(end.getMinutes()+15);
+    const groups=[...daily,weekly[d.getDay()]];const desc=groups.flatMap(g=>g.items.map(x=>"• "+x[0]+": "+x[1])).join("\\n");
+    txt+=`BEGIN:VEVENT\r\nUID:garden-${icsLocal(d)}@local\r\nDTSTAMP:${icsLocal(new Date())}\r\nDTSTART;TZID=Asia/Nicosia:${icsLocal(d)}\r\nDTEND;TZID=Asia/Nicosia:${icsLocal(end)}\r\nSUMMARY:Περιποίηση παρτεριών\r\nDESCRIPTION:${desc.replace(/\n/g,"\\n")}\r\nBEGIN:VALARM\r\nTRIGGER:-PT0M\r\nACTION:DISPLAY\r\nDESCRIPTION:Περιποίηση παρτεριών\r\nEND:VALARM\r\nEND:VEVENT\r\n`
+  }
+  txt+="END:VCALENDAR";
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"text/calendar;charset=utf-8"}));a.download="garden-care-12-weeks.ics";a.click()
+}
+document.querySelectorAll(".nav-btn").forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll(".nav-btn").forEach(x=>x.classList.remove("active"));btn.classList.add("active");
+  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById(btn.dataset.screen).classList.add("active");
+  pageTitle.textContent=btn.dataset.title;window.scrollTo({top:0,behavior:"smooth"})
+});
+buildCalendar();renderTasks();loadDay();loadBeds();renderHistory();renderPhotos();renderDiagnoses();
+if("serviceWorker" in navigator)navigator.serviceWorker.register("./sw.js");
+</script>
+</body>
+</html>
